@@ -3,25 +3,28 @@ package com.matheussilvadev.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
-public class Words {
+public class ApiUser {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	private String word;
+	@Column(unique = true)
+	private String login;
 	
-	@JsonIgnore
-	@OneToMany(mappedBy = "word")
+	private String password;
+	
+	private String name;
+	
+	@OneToMany(mappedBy = "user")
 	private List<WordsAccess> accesses = new ArrayList<WordsAccess>();
 
 	public Long getId() {
@@ -32,12 +35,28 @@ public class Words {
 		this.id = id;
 	}
 
-	public String getWord() {
-		return word;
+	public String getLogin() {
+		return login;
 	}
 
-	public void setWord(String word) {
-		this.word = word;
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public List<WordsAccess> getAccesses() {
@@ -49,5 +68,5 @@ public class Words {
 	}
 	
 	
-	
+
 }
