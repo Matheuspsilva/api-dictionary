@@ -20,6 +20,8 @@ import javax.persistence.ForeignKey;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class ApiUser implements UserDetails{
 	
@@ -78,6 +80,7 @@ public class ApiUser implements UserDetails{
 		this.name = name;
 	}
 
+	@JsonIgnore
 	public List<WordsAccess> getAccesses() {
 		return accesses;
 	}
@@ -95,11 +98,13 @@ public class ApiUser implements UserDetails{
 		this.token = token;
 	}
 
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return this.roles;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getUsername() {
 		return this.login;
@@ -110,21 +115,25 @@ public class ApiUser implements UserDetails{
 		return this.password;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonLocked() {
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isEnabled() {
 		return true;
