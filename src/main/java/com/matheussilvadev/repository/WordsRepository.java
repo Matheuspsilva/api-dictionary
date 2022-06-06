@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.matheussilvadev.model.Words;
 import com.matheussilvadev.model.AccessedWordDTO;
+import com.matheussilvadev.model.FavoriteWordsDTO;
 
 @Repository
 public interface WordsRepository extends CrudRepository<Words, Long> {
@@ -24,6 +25,10 @@ public interface WordsRepository extends CrudRepository<Words, Long> {
 	@Query(value = "SELECT word, accessed_at FROM words JOIN words_access ON words_access.word_id = words.id JOIN api_user ON api_user.id = words_access.user_id WHERE api_user.id = ?1"
 	, nativeQuery=true)
 	List<AccessedWordDTO>findAcessedWordsByUser(Long userId);
+	
+	@Query(value = "SELECT word, accessed_at FROM words JOIN favorite_words ON favorite_words.word_id = words.id JOIN api_user ON api_user.id = favorite_words.user_id WHERE api_user.id = ?1"
+	, nativeQuery=true)
+	List<FavoriteWordsDTO>findFavoritesWordsByUser(Long userId);
 	
 
 }

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.matheussilvadev.model.AccessedWordDTO;
 import com.matheussilvadev.model.ApiUser;
 import com.matheussilvadev.model.FavoriteWords;
+import com.matheussilvadev.model.FavoriteWordsDTO;
 import com.matheussilvadev.model.Words;
 import com.matheussilvadev.model.WordsAccess;
 import com.matheussilvadev.repository.ApiUserRepository;
@@ -151,6 +152,20 @@ public class WordsController {
 		List<AccessedWordDTO> words = wordsRepository.findAcessedWordsByUser(usuarioSelecionado.getId());
 		
 		return new ResponseEntity<List<AccessedWordDTO>>(words, HttpStatus.OK);
+
+	}
+	
+	@GetMapping(value = "/user/me/favorites", produces = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<List<FavoriteWordsDTO>> favorites() {
+		
+		//Seleciona Usuario logado
+		String userDetails = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiUser usuarioSelecionado = apiUserRepository.findUserByLogin(userDetails);
+		
+		List<FavoriteWordsDTO> words = wordsRepository.findFavoritesWordsByUser(usuarioSelecionado.getId());
+		
+		return new ResponseEntity<List<FavoriteWordsDTO>>(words, HttpStatus.OK);
 
 	}
 	
