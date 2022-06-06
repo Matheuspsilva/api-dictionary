@@ -13,8 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.matheussilvadev.model.AccessedWordDTO;
 import com.matheussilvadev.model.ApiUser;
+import com.matheussilvadev.model.FavoriteWords;
 import com.matheussilvadev.model.Words;
 import com.matheussilvadev.model.WordsAccess;
 import com.matheussilvadev.repository.ApiUserRepository;
+import com.matheussilvadev.repository.FavoriteWordsRepository;
 import com.matheussilvadev.repository.WordAccessRepository;
 import com.matheussilvadev.repository.WordsRepository;
 import com.matheussilvadev.service.WordsService;
@@ -38,6 +45,9 @@ public class WordsController {
 	
 	@Autowired
 	private WordAccessRepository wordAccessRepository;
+	
+	@Autowired
+	private FavoriteWordsRepository favoriteWordsRepository;
 	
 	@Autowired
 	private ApiUserRepository apiUserRepository;
@@ -67,9 +77,9 @@ public class WordsController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Words> searchWord(@PathVariable(value = "word") String wordName) {
 		
-		//TODO: Selecionar Usuario logado
-		Optional<ApiUser> usuario = apiUserRepository.findById(1L);
-		ApiUser usuarioSelecionado = usuario.get();
+		//Seleciona Usuario logado
+		String userDetails = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiUser usuarioSelecionado = apiUserRepository.findUserByLogin(userDetails);
 		
 		//Selecionar palavra pesquisada
 		Words word = wordsRepository.findWordsByName(wordName);
@@ -79,8 +89,43 @@ public class WordsController {
 		
 		wordAccessRepository.save(wordAcess);
 		
-		apiUserRepository.save(usuarioSelecionado);
+		return new ResponseEntity<Words>(word, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/entries/en/{word}/favorite", produces = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Words> favoriteWord(@PathVariable(value = "word") String wordName) {
 		
+		//Seleciona Usuario logado
+		String userDetails = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiUser usuarioSelecionado = apiUserRepository.findUserByLogin(userDetails);
+		
+		//Selecionar palavra pesquisada
+		Words word = wordsRepository.findWordsByName(wordName);
+		
+		//Configurar relação
+		FavoriteWords favoriteWord = new FavoriteWords(usuarioSelecionado, word, LocalDateTime.now());
+		
+		favoriteWordsRepository.save(favoriteWord);
+		
+		return new ResponseEntity<Words>(word, HttpStatus.OK);
+	}
+	
+	@DeleteMapping(value = "/entries/en/{word}/unfavorite", produces = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Words> unfavoriteWord(@PathVariable(value = "word") String wordName) {
+		
+		//Seleciona Usuario logado
+		String userDetails = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiUser usuarioSelecionado = apiUserRepository.findUserByLogin(userDetails);
+		
+		//Selecionar palavra pesquisada
+		Words word = wordsRepository.findWordsByName(wordName);
+		
+		//Configurar relação
+		FavoriteWords favoriteWord = new FavoriteWords(usuarioSelecionado, word);
+		
+		favoriteWordsRepository.delete(favoriteWord);
 		
 		return new ResponseEntity<Words>(word, HttpStatus.OK);
 	}
@@ -99,7 +144,11 @@ public class WordsController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<AccessedWordDTO>> history() {
 		
-		List<AccessedWordDTO> words = wordsRepository.findAcessedWordsByUser(1L);
+		//Seleciona Usuario logado
+		String userDetails = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiUser usuarioSelecionado = apiUserRepository.findUserByLogin(userDetails);
+		
+		List<AccessedWordDTO> words = wordsRepository.findAcessedWordsByUser(usuarioSelecionado.getId());
 		
 		return new ResponseEntity<List<AccessedWordDTO>>(words, HttpStatus.OK);
 
