@@ -57,21 +57,8 @@ public class WordsController {
 	WordsService service;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
-	public String greetingText() {
-		return "\"message\": \"Fullstack Challenge 🏅 - Dictionary\"";
-	}
-
-	@GetMapping(value = "/x", produces = "application/json")
-	public ResponseEntity<List<String>> listWords(@RequestParam(value = "search") String search) {
-
-		List<Words> words = (List<Words>) wordsRepository.findWordsByName(search);
-		List<String> wordName = new ArrayList<String>();
-		for (Words word : words) {
-			wordName.add(word.getWord());
-		}
-
-		return new ResponseEntity<List<String>>(wordName, HttpStatus.OK);
-
+	public ResponseEntity<String> index() {
+		return new ResponseEntity<String>("{\"message\": \"Fullstack Challenge 🏅 - Dictionary\"}", HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/entries/en/{word}", produces = "application/json")
@@ -133,39 +120,42 @@ public class WordsController {
 
 	@GetMapping("/entries/en")
 	@ResponseStatus(HttpStatus.OK)
-	public Page<Words> search(@RequestParam("search") String searchTerm,
+	public ResponseEntity<Page<Words>> search(@RequestParam("search") String searchTerm,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "limit", required = false, defaultValue = "10") int size) {
 
-		return service.search(searchTerm, page, size);
+		return new ResponseEntity<Page<Words>>(service.search(searchTerm, page, size), HttpStatus.OK);
 
 	}
 	
 	@GetMapping(value = "/user/me/history", produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<AccessedWordDTO>> history() {
+	public ResponseEntity<Page<AccessedWordDTO>> history(
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "limit", required = false, defaultValue = "10") int size
+			) {
 		
 		//Seleciona Usuario logado
 		String userDetails = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ApiUser usuarioSelecionado = apiUserRepository.findUserByLogin(userDetails);
 		
-		List<AccessedWordDTO> words = wordsRepository.findAcessedWordsByUser(usuarioSelecionado.getId());
-		
-		return new ResponseEntity<List<AccessedWordDTO>>(words, HttpStatus.OK);
+		return new ResponseEntity<Page<AccessedWordDTO>>(service.searchAcessedWords(usuarioSelecionado.getId(), page, size), HttpStatus.OK);
 
 	}
 	
 	@GetMapping(value = "/user/me/favorites", produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<FavoriteWordsDTO>> favorites() {
+	public ResponseEntity<Page<FavoriteWordsDTO>> favorites(
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "limit", required = false, defaultValue = "10") int size
+			
+			) {
 		
 		//Seleciona Usuario logado
 		String userDetails = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ApiUser usuarioSelecionado = apiUserRepository.findUserByLogin(userDetails);
 		
-		List<FavoriteWordsDTO> words = wordsRepository.findFavoritesWordsByUser(usuarioSelecionado.getId());
-		
-		return new ResponseEntity<List<FavoriteWordsDTO>>(words, HttpStatus.OK);
+		return new ResponseEntity<Page<FavoriteWordsDTO>>(service.searchFavoritesWords(usuarioSelecionado.getId(), page, size), HttpStatus.OK);
 
 	}
 	
