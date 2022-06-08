@@ -51,7 +51,7 @@ public class UserController {
 		return new ResponseEntity<ApiUser>(usuarioSelecionado, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "/user", produces = "application/json")
+	@PostMapping(value = "/auth/signup", produces = "application/json")
 	public ResponseEntity<ApiUserDTO> cadastrarUsuario(@RequestBody ApiUser usuario) throws Exception {
 		
 		String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getPassword());

@@ -37,51 +37,64 @@ Acesse a url `http://localhost:8080/`.
 ## Utilização
 
 <details open>
+<summary>[POST] /auth/signup</summary>
+</details>
+<details open>
+<summary>[POST] /auth/signin</summary>
+</details>
+<details open>
 <summary>[GET] /entries/en</summary>
+
 <p>
 Retornar a lista de palavras do dicionário, com paginação e suporte a busca. O endpoint de paginação de uma busca hipotética deve retornar a seguinte estrutura:
-<br/>
-[GET]/entries/en?search=fire&limit=4
 </p>
-
+<br/>
 </details>
+
+<details open>
+<summary>[GET]/entries/en?search=fire&limit=4</summary>
+</details>
+
 <details open>
 <summary>[GET] /entries/en/:word</summary>
 <p>
 Retornar as informações da palavra especificada e registra o histórico de acesso.
 </p>
 </details>
+
 <details open>
 <summary>[POST] /entries/en/:word/favorite</summary>
 <p>
 Salva a palavra na lista de favoritas (retorno opcional)
 </p> 
 </details>
+
 <details open>
 <summary>[DELETE] /entries/en/:word/unfavorite</summary>
 <p>
 Remover a palavra da lista de favoritas (retorno opcional)
 </p>
 </details> 
+
 <details open>
 <summary>[GET] /user/me</summary>
 <p>
 Retornar o perfil do usúario
 </p>
 </details> 
+
 <details open>
 <summary>[GET] /user/me/history</summary>
 <p>
 Retornar a lista de palavras visitadas
 </p>
-
 </details> 
+
 <details open>
 <summary>[GET] /user/me/favorites</summary>
 <p>
 Retornar a lista de palavras marcadas como favoritas
 </p>
-
 </details>
 
 ## Frontend:
