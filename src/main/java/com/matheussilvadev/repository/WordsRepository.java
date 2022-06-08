@@ -22,6 +22,9 @@ public interface WordsRepository extends CrudRepository<Words, Long> {
 	@Query("select w.word from Words w where w.word like :searchTerm%")
 	Page<Words> search(@Param("searchTerm") String searchTerm, Pageable pageable);
 	
+	@Query("select w.word from Words w ")
+	Page<Words> findAllPaginated( Pageable pageable);
+	
 	@Query(value = "SELECT word, accessed_at FROM words JOIN words_access ON words_access.word_id = words.id JOIN api_user ON api_user.id = words_access.user_id WHERE api_user.id = ?1"
 	, nativeQuery=true)
 	Page<AccessedWordDTO>findAcessedWordsByUser(Long userId,  Pageable pageable);

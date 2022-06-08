@@ -61,6 +61,21 @@ public class WordsService {
                 userId,
                 pageRequest);
     }
+    
+  public Page<Words> findAll(
+		  int page,
+		  int size) {
+
+  PageRequest pageRequest = PageRequest.of(
+          page,
+          size,
+          Sort.Direction.ASC,
+          "word");
+  return 
+          repository.findAllPaginated(pageRequest);
+          
+}
+
 
 
 }

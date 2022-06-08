@@ -145,11 +145,16 @@ public class WordsController {
 
 	@GetMapping("/entries/en")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Page<Words>> search(@RequestParam("search") String searchTerm,
+	public ResponseEntity<Page<Words>> search(@RequestParam("search") Optional<String> searchTerm,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "limit", required = false, defaultValue = "10") int size) {
+		
+		if(!searchTerm.isPresent()) {
+			return new ResponseEntity<Page<Words>>(service.findAll(page, size), HttpStatus.OK);
+		}
 
-		return new ResponseEntity<Page<Words>>(service.search(searchTerm, page, size), HttpStatus.OK);
+		return new ResponseEntity<Page<Words>>(service.search(searchTerm.get(), page, size), HttpStatus.OK);
+		
 
 	}
 	
