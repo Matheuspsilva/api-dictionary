@@ -1,5 +1,11 @@
 package com.matheussilvadev.controller;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
 import com.matheussilvadev.model.AccessedWordDTO;
 import com.matheussilvadev.model.ApiUser;
 import com.matheussilvadev.model.FavoriteWords;
@@ -63,7 +70,7 @@ public class WordsController {
 
 	@GetMapping(value = "/entries/en/{word}", produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Words> searchWord(@PathVariable(value = "word") String wordName) {
+	public ResponseEntity<String> searchWord(@PathVariable(value = "word") String wordName) throws Exception {
 		
 		//Seleciona Usuario logado
 		String userDetails = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -77,7 +84,25 @@ public class WordsController {
 		
 		wordAccessRepository.save(wordAcess);
 		
-		return new ResponseEntity<Words>(word, HttpStatus.OK);
+		//Consumindo API Externa
+		URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + wordName );
+		URLConnection connection = url.openConnection();
+		InputStream is = connection.getInputStream();
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		
+		String aux = "";
+		StringBuilder jsonWord = new StringBuilder();
+		
+		while((aux = br.readLine()) != null) {
+			jsonWord.append(aux);
+		}
+		
+		//Fim do consumo
+
+//		return new ResponseEntity<Words>(word, HttpStatus.OK);
+		return new ResponseEntity<String>(jsonWord.toString(), HttpStatus.OK);
+		
 	}
 	
 	@PostMapping(value = "/entries/en/{word}/favorite", produces = "application/json")

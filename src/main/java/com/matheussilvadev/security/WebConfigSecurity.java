@@ -29,7 +29,7 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter{
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 			.disable().authorizeRequests().antMatchers("/").permitAll()//Ativando permissão à página inicial do sistema
 			.antMatchers("/index").permitAll() //Ativando permissão à página index do sistema
-			.antMatchers(HttpMethod.OPTIONS, "/*").permitAll()
+			.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 			.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")	//URL de Logout - Redireciona após usuário deslogar do sistema
 			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))	//Mapeia URL de Logout e invalida o usuário
 			.and().addFilterBefore(new JWTLoginFilter("/auth/signin", authenticationManager()), UsernamePasswordAuthenticationFilter.class) //Filtra as requisições de login para autenticação
