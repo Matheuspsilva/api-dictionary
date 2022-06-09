@@ -101,3 +101,11 @@ Retornar a lista de palavras marcadas como favoritas
 
 [Repositório frontend](https://github.com/Matheuspsilva/frontend-dictonary)
 
+## Apresentação 
+
+[Apresentação loom](https://www.loom.com/share/b052e54bcc6f4922b3c8d74e6f3a77aa)
+
+## Documentação API
+
+[Documentação Postman](https://documenter.getpostman.com/view/12697037/Uz5MDYeL)
+
